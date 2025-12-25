@@ -37,3 +37,70 @@ html, body, #root {
 .ag-theme-quartz .ag-root-wrapper {
   background: transparent !important;
 }
+
+
+@layer utilities {
+  .vision-glass {
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(0);
+    -webkit-backdrop-filter: blur(28px) saturate(1.55);
+    backdrop-filter: blur(28px) saturate(1.55);
+  }
+
+  .vision-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(1200px 420px at 12% 0%, rgba(255,255,255,0.55), rgba(255,255,255,0) 62%),
+      radial-gradient(900px 360px at 88% 0%, rgba(255,255,255,0.28), rgba(255,255,255,0) 60%),
+      linear-gradient(145deg, rgba(255,255,255,0.50), rgba(255,255,255,0.18) 45%, rgba(255,255,255,0.06));
+    opacity: 0.75;
+  }
+
+  .vision-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(to bottom, rgba(255,255,255,0.16), rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.06));
+    opacity: 0.9;
+  }
+
+  .dark .vision-glass {
+    -webkit-backdrop-filter: blur(30px) saturate(1.35);
+    backdrop-filter: blur(30px) saturate(1.35);
+  }
+
+  .dark .vision-glass::before {
+    background:
+      radial-gradient(1200px 420px at 18% 0%, rgba(255,255,255,0.14), rgba(255,255,255,0) 62%),
+      radial-gradient(900px 360px at 84% 0%, rgba(255,255,255,0.10), rgba(255,255,255,0) 60%),
+      linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06) 45%, rgba(0,0,0,0.10));
+    opacity: 0.9;
+  }
+
+  .dark .vision-glass::after {
+    background:
+      linear-gradient(to bottom, rgba(255,255,255,0.10), rgba(255,255,255,0.02) 40%, rgba(0,0,0,0.26));
+    opacity: 1;
+  }
+
+  @keyframes vision-float {
+    0% { transform: scale(1.02) translate3d(0,0,0); }
+    50% { transform: scale(1.06) translate3d(0,-0.6%,0); }
+    100% { transform: scale(1.02) translate3d(0,0,0); }
+  }
+
+  .vision-bg-float {
+    animation: vision-float 28s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .motion-reduce .vision-bg-float {
+    animation: none;
+  }
+}

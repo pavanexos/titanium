@@ -538,7 +538,7 @@ type Lang = keyof typeof i18n;
 type I18nKey = keyof (typeof i18n)["EN"];
 type Mode = "light" | "dark";
 
-type ThemeId = "Discord" | "Turbo" | "GitHub" | "Next" | "Tailwind";
+type ThemeId = "Vision" | "Discord" | "Turbo" | "GitHub" | "Next" | "Tailwind";
 
 type Theme = {
   id: ThemeId;
@@ -551,6 +551,25 @@ type Theme = {
 };
 
 const THEMES: Theme[] = [
+  {
+    id: "Vision",
+    title: "Vision",
+    description: "Apple-like materials with airy depth",
+    accent1: "#0A84FF",
+    accent2: "#AF52DE",
+    light: {
+      bgA: "#F7F8FC",
+      bgB: "#EEF3FF",
+      glow1: "rgba(10,132,255,0.16)",
+      glow2: "rgba(175,82,222,0.12)",
+    },
+    dark: {
+      bgA: "#0A0B10",
+      bgB: "#0F172A",
+      glow1: "rgba(10,132,255,0.28)",
+      glow2: "rgba(175,82,222,0.22)",
+    },
+  },
   {
     id: "Discord",
     title: "Discord",
@@ -839,7 +858,7 @@ export default function App() {
     safeGet("gs.active", ["dashboard", "queries", "reports", "overview", "settings", "admin"] as const, "dashboard")
   );
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => safeGet("gs.sidebarCollapsed", ["0", "1"] as const, "0") === "1");
-  const [themeId, setThemeId] = useState<ThemeId>(() => safeGet("gs.themeId", THEMES.map((t) => t.id) as ThemeId[], "Discord"));
+  const [themeId, setThemeId] = useState<ThemeId>(() => safeGet("gs.themeId", THEMES.map((t) => t.id) as ThemeId[], "Vision"));
   const [gridEngine, setGridEngine] = useState<GridEngine>(() => safeGet("gs.gridEngine", ["tanstack", "aggrid"] as const, "tanstack"));
 
   const [savedQueries, setSavedQueries] = useState<SavedQuery[]>(() => safeGetJSON<SavedQuery[]>("gs.savedQueries", []));
@@ -874,11 +893,17 @@ export default function App() {
   const textMuted2 = isDark ? "text-slate-200/55" : "text-slate-800/55";
   const placeholder = isDark ? "placeholder:text-slate-50/40" : "placeholder:text-slate-950/45";
 
-  const chromeBg = isDark ? "bg-slate-950/26" : "bg-white/28";
-  const surfaceBg = isDark ? "bg-white/8" : "bg-white/78";
+  const chromeBg = isDark ? "bg-black/28" : "bg-white/32";
+  const surfaceBg = isDark ? "bg-black/16" : "bg-white/64";
 
-  const ring = isDark ? "ring-white/10" : "ring-white/24";
-  const glass = cn("backdrop-blur-2xl backdrop-saturate-150 ring-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.26)]", ring);
+  const ring = isDark ? "ring-white/12" : "ring-white/35";
+  const glass = cn("vision-glass ring-1", ring, isDark ? "shadow-[0_18px_70px_rgba(0,0,0,0.55)]" : "shadow-[0_18px_70px_rgba(15,23,42,0.14)]");
+
+  const chromePanel = cn(chromeBg, glass);
+  const surfacePanel = cn(surfaceBg, glass);
+  const contentScrim = isDark ? "bg-black/10" : "bg-white/14";
+  const shellShadow = isDark ? "shadow-[0_24px_90px_rgba(0,0,0,0.55)]" : "shadow-[0_24px_90px_rgba(15,23,42,0.16)]";
+
 
   const shellStyle = useMemo(
     () =>
@@ -973,7 +998,7 @@ export default function App() {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10"
+          className={cn("pointer-events-none absolute inset-0 -z-10", prefersReducedMotion ? "" : "vision-bg-float")}
           style={{
             background: isDark
               ? "linear-gradient(to bottom, rgba(0,0,0,0.42), rgba(0,0,0,0.18), rgba(0,0,0,0.78))"
@@ -988,9 +1013,10 @@ export default function App() {
           {t("skip")}
         </a>
 
-                <div className={cn("relative min-h-screen w-full flex flex-col", chromeBg, glass)}>
+                <div className={cn("relative min-h-screen w-full flex flex-col")}>
           <Header
                         t={t}
+            chromePanel={chromePanel}
                         lang={lang}
                         cycleLanguage={cycleLanguage}
                         mode={mode}
@@ -1013,8 +1039,8 @@ export default function App() {
                             <SheetContent
                               side="left"
                               className={cn(
-                                "w-[320px] border-none backdrop-blur-2xl",
-                                isDark ? "bg-black/55 text-slate-50" : "bg-white/85 text-slate-950"
+                                "w-[320px] border-none vision-glass ring-1",
+                                isDark ? "bg-black/55 ring-white/12 text-slate-50" : "bg-white/78 ring-white/35 text-slate-950"
                               )}
                             >
                               <SheetHeader>
@@ -1053,6 +1079,7 @@ export default function App() {
                               >
                                 <Sidebar
                                   t={t}
+                  chromePanel={chromePanel}
                                   isDark={isDark}
                                   textMuted2={textMuted2}
                                   collapsed={sidebarCollapsed}
@@ -1068,8 +1095,8 @@ export default function App() {
                                 />
                               </motion.aside>
             <main id="main" className="relative z-[1] flex min-h-0 flex-1 flex-col">
-                              <div className={cn("flex-1 min-h-0 overflow-auto p-3 sm:p-5", surfaceBg)}>
-                                <div className={cn("rounded-3xl", isDark ? "bg-black/18" : "bg-white/62", glass, "shadow-[0_18px_50px_rgba(0,0,0,0.18)]")}>
+                              <div className={cn("flex-1 min-h-0 overflow-auto p-3 sm:p-5", contentScrim)}>
+                                <div className={cn("rounded-3xl", surfacePanel, shellShadow)}>
                                   <div className="p-4 sm:p-6">
                                     {active === "dashboard" && <Dashboard t={t} isDark={isDark} textMuted={textMuted} />}
                                     {active === "queries" && (
@@ -1112,11 +1139,8 @@ export default function App() {
 
             <footer className={cn("px-3 pb-5 sm:px-5", textMuted2)}>
               <div
-                className={cn(
-                  "rounded-2xl px-4 py-3 ring-1 backdrop-blur-2xl",
-                  isDark ? "bg-white/6 ring-white/10" : "bg-white/55 ring-white/22"
-                )}
-              >
+                  className={cn("rounded-2xl px-4 py-3", glass, isDark ? "bg-black/18" : "bg-white/55")}
+                >
                 {t("footer")}
               </div>
             </footer>
@@ -1156,6 +1180,7 @@ function LogoMark() {
 }
 
 function Header(props: {
+  chromePanel: string;
   t: (k: I18nKey) => string;
   lang: Lang;
   cycleLanguage: () => void;
@@ -1172,6 +1197,7 @@ function Header(props: {
   children?: React.ReactNode;
 }) {
   const {
+    chromePanel,
     t,
     lang,
     cycleLanguage,
@@ -1193,23 +1219,22 @@ function Header(props: {
 
   const chromeBtn = cn(
     "h-10 rounded-2xl border-none ring-1 transition-colors",
-    isDark
-      ? "bg-white/10 ring-white/15 hover:bg-white/15 text-slate-50"
-      : "bg-white/75 ring-black/10 hover:bg-white/85 text-slate-950"
+    "vision-glass",
+    isDark ? "bg-white/10 ring-white/14 hover:bg-white/14 text-slate-50" : "bg-white/55 ring-white/30 hover:bg-white/70 text-slate-950"
   );
 
   const markAllRead = () => setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
 
   return (
-    <header className="sticky top-0 z-[200] px-3 py-3 sm:px-5">
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-[200] px-3 pt-3 sm:px-5">
+      <div className={cn(chromePanel, "flex items-center gap-3 rounded-[28px] px-3 py-2.5 sm:px-4")}>
         <div className="flex items-center gap-3">
           {children}
           <div className="flex items-center gap-2">
             <LogoMark />
             <div className="leading-tight">
               <div className="text-sm font-semibold">{t("appName")}</div>
-              <div className={cn("text-xs", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{t("appTagline")}</div>
+              <div className={cn("text-xs hidden md:block", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{t("appTagline")}</div>
             </div>
           </div>
         </div>
@@ -1217,9 +1242,8 @@ function Header(props: {
         <div className="mx-auto hidden max-w-[760px] flex-1 sm:block">
           <div
             className={cn(
-              "flex items-center gap-2 rounded-3xl px-3 py-2 ring-1",
-              isDark ? "bg-white/8 ring-white/12" : "bg-white/75 ring-black/10",
-              "backdrop-blur-2xl"
+              "vision-glass flex items-center gap-2 rounded-[26px] px-3 py-2 ring-1",
+              isDark ? "bg-white/10 ring-white/14" : "bg-white/55 ring-white/30"
             )}
           >
             <NavigationMenu>
@@ -1236,8 +1260,8 @@ function Header(props: {
                       className={cn(
                         "w-[760px] max-w-[92vw] rounded-3xl p-4",
                         isDark ? "bg-black/60 text-slate-50" : "bg-white/92 text-slate-950",
-                        "backdrop-blur-2xl ring-1",
-                        isDark ? "ring-white/12" : "ring-black/10"
+                        "vision-glass ring-1",
+                        isDark ? "ring-white/12" : "ring-white/30"
                       )}
                     >
                       <div className="flex items-start justify-between gap-6">
@@ -1257,7 +1281,7 @@ function Header(props: {
                             href={m.href}
                             className={cn(
                               "group rounded-2xl p-4 ring-1 transition",
-                              isDark ? "bg-white/6 ring-white/12 hover:bg-white/10" : "bg-black/5 ring-black/10 hover:bg-black/10"
+                              isDark ? "bg-white/6 ring-white/12 hover:bg-white/10" : "bg-white/35 ring-white/25 hover:bg-white/45"
                             )}
                           >
                             <div className="flex items-start justify-between gap-2">
@@ -1279,7 +1303,7 @@ function Header(props: {
                       <div className="mt-4 grid gap-3 sm:grid-cols-3">
                         <QuickLink icon={<FileText className="h-4 w-4" />} label={t("docs")} isDark={isDark} />
                         <QuickLink icon={<Sparkles className="h-4 w-4" />} label={t("changelog")} isDark={isDark} />
-                        <div className={cn("rounded-2xl p-4 ring-1", isDark ? "bg-white/6 ring-white/12" : "bg-black/5 ring-black/10")}>
+                        <div className={cn("rounded-2xl p-4 ring-1", isDark ? "bg-white/6 ring-white/12" : "bg-white/35 ring-white/25")}>
                           <div className="text-xs font-semibold">{t("tip")}</div>
                           <div className={cn("mt-1 text-xs", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{t("tipText")}</div>
                         </div>
@@ -1339,8 +1363,8 @@ function Header(props: {
             <DropdownMenuContent
               align="end"
               className={cn(
-                "w-48 border-none backdrop-blur-2xl",
-                isDark ? "bg-black/60 text-slate-50" : "bg-white/92 text-slate-950"
+                "w-56 border-none p-2 vision-glass ring-1 shadow-[0_28px_110px_rgba(0,0,0,0.35)]",
+                isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/78 ring-white/35 text-slate-950"
               )}
             >
               <DropdownMenuLabel className="text-xs">{t("profile")}</DropdownMenuLabel>
@@ -1427,8 +1451,8 @@ function ThemeMenu(props: {
       <PopoverContent
         align="end"
         className={cn(
-          "w-[380px] border-none p-4 backdrop-blur-2xl ring-1",
-          isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/92 ring-black/10 text-slate-950"
+          "w-[380px] border-none p-4 vision-glass ring-1",
+          isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/78 ring-white/35 text-slate-950"
         )}
       >
         <div className="flex items-start justify-between gap-3">
@@ -1517,8 +1541,8 @@ function NotificationsMenu(props: {
       <PopoverContent
         align="end"
         className={cn(
-          "w-[420px] border-none p-4 backdrop-blur-2xl ring-1",
-          isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/92 ring-black/10 text-slate-950"
+          "vision-glass w-[420px] border-none p-4 ring-1 shadow-[0_28px_90px_rgba(0,0,0,0.25)]",
+          isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/78 ring-white/35 text-slate-950"
         )}
       >
         <div className="flex items-start justify-between gap-4">
@@ -1545,7 +1569,7 @@ function NotificationsMenu(props: {
             .map((n) => (
               <div
                 key={n.id}
-                className={cn("rounded-2xl p-3 ring-1", isDark ? "bg-white/6 ring-white/12" : "bg-black/5 ring-black/10")}
+                className={cn("rounded-2xl p-3 ring-1", isDark ? "bg-white/6 ring-white/12" : "bg-white/35 ring-white/25")}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -1584,7 +1608,7 @@ function QuickLink({ icon, label, isDark }: { icon: React.ReactNode; label: stri
         href="#"
         className={cn(
           "flex items-center gap-2 rounded-2xl p-4 ring-1",
-          isDark ? "bg-white/6 ring-white/12 hover:bg-white/10" : "bg-black/5 ring-black/10 hover:bg-black/10"
+          isDark ? "bg-white/6 ring-white/12 hover:bg-white/10" : "bg-white/35 ring-white/25 hover:bg-white/45"
         )}
       >
         <span className={cn("inline-flex h-9 w-9 items-center justify-center rounded-xl", isDark ? "bg-white/10" : "bg-white/70")}>{icon}</span>
@@ -1617,6 +1641,7 @@ function SegmentButton({ active, onClick, label, isDark }: { active: boolean; on
 }
 
 function Sidebar(props: {
+  chromePanel: string;
   t: (k: I18nKey) => string;
   isDark: boolean;
   textMuted2: string;
@@ -1628,11 +1653,11 @@ function Sidebar(props: {
   secondary: readonly { id: ActiveView; labelKey: I18nKey; icon: React.ComponentType<{ className?: string }> }[];
   prefersReducedMotion: boolean;
 }) {
-  const { t, isDark, textMuted2, collapsed, setCollapsed, active, setActive, primary, secondary, prefersReducedMotion } = props;
+  const { chromePanel, t, isDark, textMuted2, collapsed, setCollapsed, active, setActive, primary, secondary, prefersReducedMotion } = props;
 
   return (
     <motion.div className="h-full min-h-0 px-3 pb-4 pt-2" layout transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 40 }}>
-      <div className={cn("flex h-full min-h-0 flex-col rounded-3xl p-2", isDark ? "bg-white/8 text-slate-50" : "bg-white/42 text-slate-950", "backdrop-blur-2xl ring-1", isDark ? "ring-white/10" : "ring-black/10")}>
+      <div className={cn("flex h-full min-h-0 flex-col rounded-3xl p-2", chromePanel, isDark ? "text-slate-50" : "text-slate-950")}>
         <div className={cn("flex items-center justify-between px-2 py-2", collapsed && "px-1")}>
           <div className={cn("text-xs font-semibold uppercase tracking-wide", textMuted2, collapsed && "sr-only")}>{t("workspace")}</div>
           <Tooltip>
@@ -1640,7 +1665,7 @@ function Sidebar(props: {
               <Button
                 variant="ghost"
                 size="icon"
-                className={cn("h-9 w-9 hover:bg-white/20", isDark ? "bg-white/10" : "bg-white/70", collapsed ? "rounded-xl" : "rounded-2xl")}
+                className={cn("h-9 w-9 hover:bg-white/15", isDark ? "bg-white/10" : "bg-white/70", collapsed ? "rounded-xl" : "rounded-2xl")}
                 onClick={() => setCollapsed((v) => !v)}
                 aria-label={collapsed ? t("sidebarExpand") : t("sidebarCollapse")}
                 aria-pressed={collapsed}
@@ -1745,9 +1770,10 @@ function SidebarButton(props: {
   const { label, active, onClick, icon: Icon, collapsed, isDark } = props;
 
   const base = cn(
-    "flex h-11 w-full items-center gap-3 rounded-2xl text-left text-sm font-medium ring-1 transition-colors",
-    isDark ? "ring-white/10" : "ring-black/10",
-    active ? (isDark ? "bg-white/12" : "bg-black/10") : isDark ? "bg-white/6 hover:bg-white/10" : "bg-black/5 hover:bg-black/10"
+    "relative flex h-11 w-full items-center rounded-2xl text-left text-sm font-medium ring-1 transition-colors",
+    isDark ? "ring-white/10 text-slate-50" : "ring-white/24 text-slate-950",
+    collapsed ? "justify-center px-0" : "px-3",
+    active ? "" : isDark ? "hover:bg-white/8" : "hover:bg-white/22"
   );
 
   return (
@@ -1759,29 +1785,39 @@ function SidebarButton(props: {
           onClick={onClick}
           aria-label={collapsed ? label : undefined}
           aria-current={active ? "page" : undefined}
-          className={cn(
-            base,
-            collapsed ? "justify-center px-0" : "px-3",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent1)]/60"
-          )}
+          className={cn(base, "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent1)]/55")}
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 520, damping: 34 }}
         >
-          <Icon className="h-5 w-5 shrink-0 opacity-90" />
-          <AnimatePresence initial={false} mode="popLayout">
-            {!collapsed && (
-              <motion.span
-                key="label"
-                className="truncate"
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -6 }}
-                transition={{ duration: 0.14 }}
-              >
-                {label}
-              </motion.span>
-            )}
-          </AnimatePresence>
+          {active && (
+            <motion.div
+              layoutId="sidebar-active"
+              className={cn(
+                "absolute inset-0 rounded-2xl",
+                isDark ? "bg-white/12" : "bg-white/45"
+              )}
+              transition={{ type: "spring", stiffness: 520, damping: 40 }}
+            />
+          )}
+
+          <span className={cn("relative z-10 flex w-full items-center", collapsed ? "justify-center" : "gap-3") }>
+            <Icon className={cn("h-5 w-5 shrink-0", isDark ? "text-white/85" : "text-slate-950/80")} />
+            <AnimatePresence initial={false} mode="popLayout">
+              {!collapsed && (
+                <motion.span
+                  key="label"
+                  className="truncate"
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -6 }}
+                  transition={{ duration: 0.14 }}
+                >
+                  {label}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </span>
         </motion.button>
       </TooltipTrigger>
       {collapsed ? <TooltipContent>{label}</TooltipContent> : null}
@@ -2536,7 +2572,7 @@ function AiAssistant(props: {
           </TooltipTrigger>
           <TooltipContent>{t("ai")}</TooltipContent>
         </Tooltip>
-        <PopoverContent align="end" side="top" className={cn("w-[360px] border-none p-0 backdrop-blur-2xl", isDark ? "bg-black/60" : "bg-white/92")}>
+        <PopoverContent align="end" side="top" className={cn("vision-glass w-[360px] border-none p-0", isDark ? "bg-black/60" : "bg-white/92")}>
           <div className={cn("rounded-2xl", glass)}>
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-2">

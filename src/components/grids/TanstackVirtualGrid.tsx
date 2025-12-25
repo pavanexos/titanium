@@ -25,6 +25,7 @@ export type TanstackVirtualGridProps<T extends object> = {
   height?: number;
   ariaLabel?: string;
   searchPlaceholder?: string;
+  rowsLabel?: string;
 };
 
 export function TanstackVirtualGrid<T extends object>(props: TanstackVirtualGridProps<T>) {
@@ -40,6 +41,7 @@ export function TanstackVirtualGrid<T extends object>(props: TanstackVirtualGrid
     height = 420,
     ariaLabel,
     searchPlaceholder = "Search",
+    rowsLabel = "rows",
   } = props;
 
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -106,7 +108,7 @@ export function TanstackVirtualGrid<T extends object>(props: TanstackVirtualGrid
           />
           <div className={cn("hidden rounded-2xl px-3 py-2 text-xs ring-1 sm:block", chip)}>
             <span className={cn("mr-2", textMuted)}>{rows.length}</span>
-            <span className={textMuted}>rows</span>
+            <span className={textMuted}>{rowsLabel}</span>
           </div>
         </div>
       </div>

@@ -77,7 +77,11 @@ function dateISO(rnd: () => number, daysBack = 60) {
   return new Date(now - delta).toISOString().slice(0, 10);
 }
 
-export function makeQueryRows(entity: QueryEntity, count: number, seedKey = entity): Array<CustomerRow | OrderRow | InvoiceRow | UserRow> {
+export function makeQueryRows(
+  entity: QueryEntity,
+  count: number,
+  seedKey: string = entity
+): Array<CustomerRow | OrderRow | InvoiceRow | UserRow> {
   const rnd = mulberry32(hashString(seedKey));
   const rows: Array<CustomerRow | OrderRow | InvoiceRow | UserRow> = [];
 

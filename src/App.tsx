@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { ColDef } from "ag-grid-community";
 import {
@@ -874,12 +874,11 @@ export default function App() {
   const textMuted2 = isDark ? "text-slate-200/55" : "text-slate-800/55";
   const placeholder = isDark ? "placeholder:text-slate-50/40" : "placeholder:text-slate-950/45";
 
-  const frameBg = isDark ? "bg-white/6" : "bg-white/24";
-  const chromeBg = isDark ? "bg-slate-950/35" : "bg-white/55";
-  const surfaceBg = isDark ? "bg-white/10" : "bg-white/92";
+  const chromeBg = isDark ? "bg-slate-950/26" : "bg-white/28";
+  const surfaceBg = isDark ? "bg-white/8" : "bg-white/78";
 
-  const ring = isDark ? "ring-white/10" : "ring-black/10";
-  const glass = cn("backdrop-blur-2xl backdrop-saturate-150 ring-1", ring);
+  const ring = isDark ? "ring-white/10" : "ring-white/24";
+  const glass = cn("backdrop-blur-2xl backdrop-saturate-150 ring-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.26)]", ring);
 
   const shellStyle = useMemo(
     () =>
@@ -989,130 +988,143 @@ export default function App() {
           {t("skip")}
         </a>
 
-        <div className="mx-auto max-w-[1600px] px-3 py-3 sm:px-5 sm:py-5">
-          <div className={cn("rounded-3xl shadow-2xl shadow-black/20", frameBg, glass)}>
-            <div className={cn("relative rounded-3xl", chromeBg, glass)}>
-              <div className="relative z-[1] overflow-visible">
-                <Header
-                t={t}
-                lang={lang}
-                cycleLanguage={cycleLanguage}
-                mode={mode}
-                setMode={setMode}
-                themeId={themeId}
-                setThemeId={setThemeId}
-                notifications={notifications}
-                setNotifications={setNotifications}
-                modules={modules}
-                prefersReducedMotion={prefersReducedMotion}
-                isDark={isDark}
-                placeholderClass={placeholder}
-              >
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-2xl sm:hidden" aria-label={t("openNav")}>
-                      <Menu className="h-5 w-5" />
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent
-                    side="left"
-                    className={cn(
-                      "w-[320px] border-none backdrop-blur-2xl",
-                      isDark ? "bg-black/55 text-slate-50" : "bg-white/85 text-slate-950"
-                    )}
-                  >
-                    <SheetHeader>
-                      <SheetTitle className="flex items-center gap-2">
-                        <LogoMark />
-                        <span>{t("appName")}</span>
-                      </SheetTitle>
-                    </SheetHeader>
-                    <div className="mt-4">
-                      <MobileNav
-                        active={active}
-                        setActive={(v) => {
-                          setActive(v);
-                          setSelectedReportId(null);
-                        }}
-                        primary={primaryNav}
-                        secondary={secondaryNav}
+                <div className={cn("relative min-h-screen w-full flex flex-col", chromeBg, glass)}>
+          <Header
                         t={t}
+                        lang={lang}
+                        cycleLanguage={cycleLanguage}
+                        mode={mode}
+                        setMode={setMode}
+                        themeId={themeId}
+                        setThemeId={setThemeId}
+                        notifications={notifications}
+                        setNotifications={setNotifications}
+                        modules={modules}
+                        prefersReducedMotion={prefersReducedMotion}
                         isDark={isDark}
-                      />
-                    </div>
-                  </SheetContent>
-                </Sheet>
-                </Header>
-              </div>
-
-              <div className="relative overflow-hidden rounded-b-3xl">
-                <div className="flex min-h-[calc(100vh-88px)]">
-                <aside className={cn("hidden sm:flex flex-col", sidebarCollapsed ? "w-[84px]" : "w-[280px]")}>
-                  <Sidebar
-                    t={t}
-                    isDark={isDark}
-                    textMuted2={textMuted2}
-                    collapsed={sidebarCollapsed}
-                    setCollapsed={setSidebarCollapsed}
-                    active={active}
-                    setActive={(v) => {
-                      setActive(v);
-                      setSelectedReportId(null);
-                    }}
-                    primary={primaryNav}
-                    secondary={secondaryNav}
-                  />
-                </aside>
-
-                <main id="main" className="relative flex-1">
-                  <div className={cn("h-full p-3 sm:p-5", surfaceBg)}>
-                    <div className={cn("h-full rounded-3xl", isDark ? "bg-black/18" : "bg-white/70", glass)}>
-                      <div className="p-4 sm:p-6">
-                        {active === "dashboard" && <Dashboard t={t} isDark={isDark} textMuted={textMuted} />}
-                        {active === "queries" && (
-                          <Queries
-                            t={t}
-                            isDark={isDark}
-                            textMuted={textMuted}
-                            placeholderClass={placeholder}
-                            gridEngine={gridEngine}
-                            setGridEngine={setGridEngine}
-                            savedQueries={savedQueries}
-                            setSavedQueries={setSavedQueries}
-                          />
-                        )}
-                        {active === "reports" && (
-                          <Reports
-                            t={t}
-                            isDark={isDark}
-                            textMuted={textMuted}
-                            placeholderClass={placeholder}
-                            gridEngine={gridEngine}
-                            setGridEngine={setGridEngine}
-                            reports={REPORTS}
-                            selectedReportId={selectedReportId}
-                            setSelectedReportId={setSelectedReportId}
-                          />
-                        )}
-                        {active === "overview" && (
-                          <SimplePanel title={t("navOverview")} subtitle={t("heroSubtitle")} isDark={isDark} textMuted={textMuted} />
-                        )}
-                        {active === "settings" && (
-                          <SimplePanel title={t("navSettings")} subtitle={t("themesSubtitle")} isDark={isDark} textMuted={textMuted} />
-                        )}
-                        {active === "admin" && (
-                          <SimplePanel title={t("navAdmin")} subtitle={t("securityPosture")} isDark={isDark} textMuted={textMuted} />
-                        )}
-                      </div>
-                      <div className={cn("px-6 pb-6 pt-0 text-xs", textMuted2)}>{t("footer")}</div>
-                    </div>
-                  </div>
-                </main>
-                </div>
-              </div>
+                        placeholderClass={placeholder}
+                      >
+                          <Sheet>
+                            <SheetTrigger asChild>
+                              <Button variant="ghost" size="icon" className="rounded-2xl sm:hidden" aria-label={t("openNav")}>
+                                <Menu className="h-5 w-5" />
+                              </Button>
+                            </SheetTrigger>
+                            <SheetContent
+                              side="left"
+                              className={cn(
+                                "w-[320px] border-none backdrop-blur-2xl",
+                                isDark ? "bg-black/55 text-slate-50" : "bg-white/85 text-slate-950"
+                              )}
+                            >
+                              <SheetHeader>
+                                <SheetTitle className="flex items-center gap-2">
+                                  <LogoMark />
+                                  <span>{t("appName")}</span>
+                                </SheetTitle>
+                              </SheetHeader>
+                              <div className="mt-4">
+                                <MobileNav
+                                  active={active}
+                                  setActive={(v) => {
+                                    setActive(v);
+                                    setSelectedReportId(null);
+                                  }}
+                                  primary={primaryNav}
+                                  secondary={secondaryNav}
+                                  t={t}
+                                  isDark={isDark}
+                                />
+                              </div>
+                            </SheetContent>
+                          </Sheet>
+                      </Header>
+          <div className="flex flex-1 min-h-0">
+            <motion.aside
+                                className={cn("relative z-[5] hidden sm:flex h-full flex-col flex-shrink-0")}
+                                initial={false}
+                                animate={{ width: sidebarCollapsed ? 96 : 288 }}
+                                transition={
+                                  prefersReducedMotion
+                                    ? { duration: 0 }
+                                    : { type: "spring", stiffness: 260, damping: 28, mass: 0.9 }
+                                }
+                                style={{ willChange: "width" }}
+                              >
+                                <Sidebar
+                                  t={t}
+                                  isDark={isDark}
+                                  textMuted2={textMuted2}
+                                  collapsed={sidebarCollapsed}
+                                  setCollapsed={setSidebarCollapsed}
+                                  active={active}
+                                  setActive={(v) => {
+                                    setActive(v);
+                                    setSelectedReportId(null);
+                                  }}
+                                  primary={primaryNav}
+                                  secondary={secondaryNav}
+                                  prefersReducedMotion={prefersReducedMotion}
+                                />
+                              </motion.aside>
+            <main id="main" className="relative z-[1] flex min-h-0 flex-1 flex-col">
+                              <div className={cn("flex-1 min-h-0 overflow-auto p-3 sm:p-5", surfaceBg)}>
+                                <div className={cn("rounded-3xl", isDark ? "bg-black/18" : "bg-white/62", glass, "shadow-[0_18px_50px_rgba(0,0,0,0.18)]")}>
+                                  <div className="p-4 sm:p-6">
+                                    {active === "dashboard" && <Dashboard t={t} isDark={isDark} textMuted={textMuted} />}
+                                    {active === "queries" && (
+                                      <Queries
+                                        t={t}
+                                        isDark={isDark}
+                                        textMuted={textMuted}
+                                        placeholderClass={placeholder}
+                                        gridEngine={gridEngine}
+                                        setGridEngine={setGridEngine}
+                                        savedQueries={savedQueries}
+                                        setSavedQueries={setSavedQueries}
+                                      />
+                                    )}
+                                    {active === "reports" && (
+                                      <Reports
+                                        t={t}
+                                        isDark={isDark}
+                                        textMuted={textMuted}
+                                        placeholderClass={placeholder}
+                                        gridEngine={gridEngine}
+                                        setGridEngine={setGridEngine}
+                                        reports={REPORTS}
+                                        selectedReportId={selectedReportId}
+                                        setSelectedReportId={setSelectedReportId}
+                                      />
+                                    )}
+                                    {active === "overview" && (
+                                      <SimplePanel title={t("navOverview")} subtitle={t("heroSubtitle")} isDark={isDark} textMuted={textMuted} />
+                                    )}
+                                    {active === "settings" && (
+                                      <SimplePanel title={t("navSettings")} subtitle={t("themesSubtitle")} isDark={isDark} textMuted={textMuted} />
+                                    )}
+                                    {active === "admin" && (
+                                      <SimplePanel title={t("navAdmin")} subtitle={t("securityPosture")} isDark={isDark} textMuted={textMuted} />
+                                    )}
+                                  </div>
             </div>
+                              </div>
+
+            <footer className={cn("px-3 pb-5 sm:px-5", textMuted2)}>
+              <div
+                className={cn(
+                  "rounded-2xl px-4 py-3 ring-1 backdrop-blur-2xl",
+                  isDark ? "bg-white/6 ring-white/10" : "bg-white/55 ring-white/22"
+                )}
+              >
+                {t("footer")}
+              </div>
+            </footer>
+                            </main>
           </div>
         </div>
+
+
 
         <AiAssistant
           t={t}
@@ -1614,12 +1626,13 @@ function Sidebar(props: {
   setActive: (v: ActiveView) => void;
   primary: readonly { id: ActiveView; labelKey: I18nKey; icon: React.ComponentType<{ className?: string }> }[];
   secondary: readonly { id: ActiveView; labelKey: I18nKey; icon: React.ComponentType<{ className?: string }> }[];
+  prefersReducedMotion: boolean;
 }) {
-  const { t, isDark, textMuted2, collapsed, setCollapsed, active, setActive, primary, secondary } = props;
+  const { t, isDark, textMuted2, collapsed, setCollapsed, active, setActive, primary, secondary, prefersReducedMotion } = props;
 
   return (
-    <div className="h-full px-3 pb-4 pt-2">
-      <div className={cn("flex h-full flex-col rounded-3xl p-2", isDark ? "bg-white/8" : "bg-white/38", "backdrop-blur-2xl ring-1", isDark ? "ring-white/10" : "ring-black/10")}>
+    <motion.div className="h-full min-h-0 px-3 pb-4 pt-2" layout transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 40 }}>
+      <div className={cn("flex h-full min-h-0 flex-col rounded-3xl p-2", isDark ? "bg-white/8 text-slate-50" : "bg-white/42 text-slate-950", "backdrop-blur-2xl ring-1", isDark ? "ring-white/10" : "ring-black/10")}>
         <div className={cn("flex items-center justify-between px-2 py-2", collapsed && "px-1")}>
           <div className={cn("text-xs font-semibold uppercase tracking-wide", textMuted2, collapsed && "sr-only")}>{t("workspace")}</div>
           <Tooltip>
@@ -1639,7 +1652,7 @@ function Sidebar(props: {
           </Tooltip>
         </div>
 
-        <ScrollArea className={cn("pr-2", collapsed ? "h-[calc(100vh-220px)]" : "h-[calc(100vh-260px)]")}>
+        <ScrollArea className={cn("flex-1 min-h-0", collapsed ? "pr-0" : "pr-2")}>
           <div className={cn("space-y-1 px-1 pb-2", collapsed && "px-0")}>
             {primary.map((it) => (
               <SidebarButton
@@ -1670,7 +1683,9 @@ function Sidebar(props: {
             ))}
           </div>
 
-          <div className={cn("mt-4 px-2", collapsed && "px-1")}>
+                  </ScrollArea>
+
+        <div className={cn("mt-auto px-2 pb-2", collapsed && "px-1")}>
             <div className={cn("rounded-3xl p-3 backdrop-blur-xl", isDark ? "bg-white/10" : "bg-white/70")}>
               <div className="flex items-start justify-between gap-3">
                 <div className={cn(collapsed && "sr-only")}>
@@ -1678,8 +1693,12 @@ function Sidebar(props: {
                   <div className={cn("text-xs", textMuted2)}>{t("ssoEnabled")}</div>
                 </div>
                 {collapsed ? (
-                  <div className="grid h-9 w-9 place-items-center rounded-xl text-white" style={{ background: "linear-gradient(135deg, var(--accent1), var(--accent2))" }} aria-hidden>
-                    <span className="text-xs font-semibold">S</span>
+                  <div
+                    className="grid h-9 w-9 place-items-center rounded-xl text-white"
+                    style={{ background: "linear-gradient(135deg, var(--accent1), var(--accent2))" }}
+                    aria-hidden
+                  >
+                    <Globe className="h-4 w-4" />
                   </div>
                 ) : (
                   <Globe className="h-5 w-5 opacity-80" aria-hidden />
@@ -1708,10 +1727,10 @@ function Sidebar(props: {
               </div>
             </div>
           </div>
-        </ScrollArea>
+        
       </div>
 
-    </div>
+    </motion.div>
   );
 }
 
@@ -1726,29 +1745,47 @@ function SidebarButton(props: {
   const { label, active, onClick, icon: Icon, collapsed, isDark } = props;
 
   const base = cn(
-    "flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left text-sm font-medium ring-1 transition",
+    "flex h-11 w-full items-center gap-3 rounded-2xl text-left text-sm font-medium ring-1 transition-colors",
     isDark ? "ring-white/10" : "ring-black/10",
     active ? (isDark ? "bg-white/12" : "bg-black/10") : isDark ? "bg-white/6 hover:bg-white/10" : "bg-black/5 hover:bg-black/10"
   );
 
-  if (collapsed) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button type="button" className={cn(base, "justify-center px-0")} onClick={onClick} aria-label={label}>
-            <Icon className="h-5 w-5" />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>{label}</TooltipContent>
-      </Tooltip>
-    );
-  }
-
   return (
-    <button type="button" className={base} onClick={onClick} aria-current={active ? "page" : undefined}>
-      <Icon className="h-5 w-5" />
-      <span className="truncate">{label}</span>
-    </button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <motion.button
+          type="button"
+          layout
+          onClick={onClick}
+          aria-label={collapsed ? label : undefined}
+          aria-current={active ? "page" : undefined}
+          className={cn(
+            base,
+            collapsed ? "justify-center px-0" : "px-3",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent1)]/60"
+          )}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <Icon className="h-5 w-5 shrink-0 opacity-90" />
+          <AnimatePresence initial={false} mode="popLayout">
+            {!collapsed && (
+              <motion.span
+                key="label"
+                className="truncate"
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -6 }}
+                transition={{ duration: 0.14 }}
+              >
+                {label}
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </motion.button>
+      </TooltipTrigger>
+      {collapsed ? <TooltipContent>{label}</TooltipContent> : null}
+    </Tooltip>
   );
 }
 
@@ -1777,7 +1814,7 @@ function MobileNav(props: {
               isActive ? (isDark ? "bg-white/12" : "bg-black/10") : isDark ? "bg-white/6" : "bg-black/5"
             )}
           >
-            <Icon className="h-5 w-5" />
+            <Icon className="h-5 w-5 shrink-0 opacity-90" />
             {t(it.labelKey)}
           </button>
         );
@@ -2489,7 +2526,7 @@ function AiAssistant(props: {
                 size="icon"
                 className={cn(
                   "h-12 w-12 rounded-2xl shadow-lg ring-1",
-                  isDark ? "bg-white/10 ring-white/15 hover:bg-white/15" : "bg-white/80 ring-black/10 hover:bg-white/90"
+                  isDark ? "bg-white/10 ring-white/15 hover:bg-white/15 text-slate-50" : "bg-white/80 ring-black/10 hover:bg-white/90 text-slate-950"
                 )}
                 aria-label={t("aiAssistant")}
               >

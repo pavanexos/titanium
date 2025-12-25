@@ -866,8 +866,12 @@ export default function App() {
   const textMuted2 = isDark ? "text-slate-200/55" : "text-slate-800/55";
   const placeholder = isDark ? "placeholder:text-slate-50/40" : "placeholder:text-slate-950/45";
 
-  const chromeBg = isDark ? "bg-slate-950/35" : "bg-white/55";
-  const surfaceBg = isDark ? "bg-white/10" : "bg-white/92";
+  // Avoid a full-page tinted rectangle. The backdrop (image + vignette) sits behind,
+  // while individual surfaces (header/sidebar/cards) provide the glass treatment.
+  const chromeBg = "bg-transparent";
+  // Keep the global shell transparent so the backdrop image remains vivid.
+  // Surfaces (header/sidebar/cards) carry the glass material instead.
+  const surfaceBg = "bg-transparent";
 
   const ring = isDark ? "ring-white/10" : "ring-black/10";
   const glass = cn("backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-inset", ring);
@@ -980,7 +984,8 @@ export default function App() {
           {t("skip")}
         </a>
 
-        <div className={cn("relative min-h-screen w-full flex flex-col", chromeBg, glass)}>
+        {/* Global shell: keep it light so the backdrop stays vivid; apply glass on surfaces instead. */}
+        <div className={cn("relative min-h-screen w-full flex flex-col", chromeBg)}>
           <div className="relative z-[1] overflow-visible">
             <Header
               t={t}

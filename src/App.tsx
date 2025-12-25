@@ -53,6 +53,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
+import backdrop4k from "@/assets/backdrop-user-wave-4k.webp";
+
 import { GridEngineToggle, type GridEngine } from "@/components/grids/GridEngineToggle";
 import { TanstackVirtualGrid } from "@/components/grids/TanstackVirtualGrid";
 import { AgGridPanel } from "@/components/grids/AgGridPanel";
@@ -66,8 +68,6 @@ import {
   type UserRow,
 } from "@/lib/dummy";
 
-import backdrop4k from "./assets/backdrop-4k.webp";
-
 const NOISE_SVG = `
 <svg xmlns="http://www.w3.org/2000/svg" width="260" height="260" viewBox="0 0 260 260">
   <filter id="n">
@@ -79,8 +79,7 @@ const NOISE_SVG = `
 `;
 
 const NOISE_BG = `data:image/svg+xml;utf8,${encodeURIComponent(NOISE_SVG)}`;
-const BACKDROP_IMG =
-  "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=2400&q=80";
+
 
 const i18n = {
   EN: {
@@ -875,12 +874,12 @@ export default function App() {
   const textMuted2 = isDark ? "text-slate-200/55" : "text-slate-800/55";
   const placeholder = isDark ? "placeholder:text-slate-50/40" : "placeholder:text-slate-950/45";
 
-  const frameBg = isDark ? "bg-white/5" : "bg-white/18";
+  const frameBg = isDark ? "bg-white/6" : "bg-white/24";
   const chromeBg = isDark ? "bg-slate-950/35" : "bg-white/55";
   const surfaceBg = isDark ? "bg-white/10" : "bg-white/92";
 
   const ring = isDark ? "ring-white/10" : "ring-black/10";
-  const glass = cn("backdrop-blur-2xl backdrop-saturate-180 ring-1", ring);
+  const glass = cn("backdrop-blur-2xl backdrop-saturate-150 ring-1", ring);
 
   const shellStyle = useMemo(
     () =>
@@ -962,16 +961,15 @@ export default function App() {
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
-            backgroundImage: `radial-gradient(1100px 700px at 18% 22%, var(--glow1), rgba(0,0,0,0) 62%), radial-gradient(900px 650px at 82% 28%, var(--glow2), rgba(0,0,0,0) 64%), url(${BACKDROP_IMG})`,
+            backgroundImage: `radial-gradient(1100px 700px at 18% 22%, var(--glow1), rgba(0,0,0,0) 62%), radial-gradient(900px 650px at 82% 28%, var(--glow2), rgba(0,0,0,0) 64%), url(${backdrop4k})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
             filter: isDark ? "saturate(1.05) brightness(0.95)" : "saturate(1.12) brightness(1.02)",
           }}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 opacity-40 mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-55 mix-blend-overlay"
           style={{ backgroundImage: `url(${NOISE_BG})`, backgroundSize: "260px 260px" }}
         />
         <div
@@ -992,9 +990,10 @@ export default function App() {
         </a>
 
         <div className="mx-auto max-w-[1600px] px-3 py-3 sm:px-5 sm:py-5">
-          <div className={cn("overflow-hidden rounded-3xl shadow-2xl shadow-black/20", frameBg, glass)}>
-            <div className={cn("relative", chromeBg, glass)}>
-              <Header
+          <div className={cn("rounded-3xl shadow-2xl shadow-black/20", frameBg, glass)}>
+            <div className={cn("relative rounded-3xl", chromeBg, glass)}>
+              <div className="relative z-[1] overflow-visible">
+                <Header
                 t={t}
                 lang={lang}
                 cycleLanguage={cycleLanguage}
@@ -1043,9 +1042,11 @@ export default function App() {
                     </div>
                   </SheetContent>
                 </Sheet>
-              </Header>
+                </Header>
+              </div>
 
-              <div className="flex min-h-[calc(100vh-88px)]">
+              <div className="relative overflow-hidden rounded-b-3xl">
+                <div className="flex min-h-[calc(100vh-88px)]">
                 <aside className={cn("hidden sm:flex flex-col", sidebarCollapsed ? "w-[84px]" : "w-[280px]")}>
                   <Sidebar
                     t={t}
@@ -1107,6 +1108,7 @@ export default function App() {
                     </div>
                   </div>
                 </main>
+                </div>
               </div>
             </div>
           </div>

@@ -35,7 +35,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
 const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-10 w-max items-center justify-center rounded-2xl bg-transparent px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 focus:bg-white/10 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white/12"
+  "group inline-flex h-10 w-max items-center justify-center rounded-2xl bg-transparent px-3 py-2 text-sm font-medium transition-colors hover:bg-black/5 focus:bg-black/5 dark:hover:bg-white/10 dark:focus:bg-white/10 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-black/5 dark:data-[state=open]:bg-white/12"
 );
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -79,11 +79,11 @@ const NavigationMenuViewport = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
 >(({ className, ...props }, ref) => (
-  <div className={cn("absolute left-0 top-full flex justify-center")}>
+  <div className={cn("absolute left-0 top-full z-[400] flex justify-center")}>
     <NavigationMenuPrimitive.Viewport
       className={cn(
         "origin-top-center relative mt-2 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-3xl",
-        "border border-white/10 bg-black/40 shadow-2xl backdrop-blur-2xl",
+        "border border-black/10 bg-white/80 text-slate-950 shadow-2xl backdrop-blur-2xl dark:border-white/10 dark:bg-black/40 dark:text-slate-50",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90",
         className
       )}

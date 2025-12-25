@@ -197,6 +197,18 @@ const i18n = {
     gridTanstack: "TanStack (virtual)",
     gridAgGrid: "AG Grid",
     gridSearchRows: "Search rows",
+    selected: "selected",
+    agOptions: "Options",
+    agOptionsTooltip: "Grid options",
+    agMenuGrid: "Grid",
+    agMenuPageSize: "Page size",
+    agDensity: "Density",
+    agComfortable: "Comfortable",
+    agCompact: "Compact",
+    agAutoSize: "Auto-size columns",
+    agExportCsv: "Export CSV",
+    agReset: "Reset grid",
+    agNoRows: "No rows",
     queryResultsTitle: "Query results",
     queryResultsSubtitle: "Preview the results in a high-performance data grid.",
     reportDataTitle: "Report data",
@@ -347,6 +359,18 @@ const i18n = {
     gridTanstack: "TanStack (virtual)",
     gridAgGrid: "AG Grid",
     gridSearchRows: "Zeilen durchsuchen",
+    selected: "ausgewählt",
+    agOptions: "Optionen",
+    agOptionsTooltip: "Rasteroptionen",
+    agMenuGrid: "Raster",
+    agMenuPageSize: "Seitengröße",
+    agDensity: "Dichte",
+    agComfortable: "Komfortabel",
+    agCompact: "Kompakt",
+    agAutoSize: "Spalten automatisch anpassen",
+    agExportCsv: "CSV exportieren",
+    agReset: "Raster zurücksetzen",
+    agNoRows: "Keine Zeilen",
     queryResultsTitle: "Abfrageergebnisse",
     queryResultsSubtitle: "Vorschau der Ergebnisse in einem performanten Datenraster.",
     reportDataTitle: "Berichtsdaten",
@@ -497,6 +521,18 @@ const i18n = {
     gridTanstack: "TanStack (virtual)",
     gridAgGrid: "AG Grid",
     gridSearchRows: "Rechercher des lignes",
+    selected: "sélectionnés",
+    agOptions: "Options",
+    agOptionsTooltip: "Options du tableau",
+    agMenuGrid: "Tableau",
+    agMenuPageSize: "Taille de page",
+    agDensity: "Densité",
+    agComfortable: "Confortable",
+    agCompact: "Compact",
+    agAutoSize: "Ajuster les colonnes",
+    agExportCsv: "Exporter CSV",
+    agReset: "Réinitialiser le tableau",
+    agNoRows: "Aucune ligne",
     queryResultsTitle: "Résultats de requête",
     queryResultsSubtitle: "Aperçu des résultats dans une grille de données performante.",
     reportDataTitle: "Données du rapport",
@@ -2328,6 +2364,23 @@ function Queries(props: {
             textMuted={textMuted}
             rowData={resultRows as any[]}
             columnDefs={queryAgCols}
+            placeholderClass={placeholderClass}
+            searchPlaceholder={t("gridSearchRows")}
+            rowsLabel={t("rows")}
+            selectedLabel={t("selected")}
+            uiText={{
+              options: t("agOptions"),
+              optionsTooltip: t("agOptionsTooltip"),
+              menuGrid: t("agMenuGrid"),
+              menuPageSize: t("agMenuPageSize"),
+              density: t("agDensity"),
+              comfortable: t("agComfortable"),
+              compact: t("agCompact"),
+              autoSizeColumns: t("agAutoSize"),
+              exportCsv: t("agExportCsv"),
+              resetGrid: t("agReset"),
+              noRows: t("agNoRows"),
+            }}
             height={460}
             ariaLabel={t("queryResultsTitle")}
           />
@@ -2511,6 +2564,23 @@ function Reports(props: {
             textMuted={textMuted}
             rowData={reportRows as any[]}
             columnDefs={reportAgCols}
+            placeholderClass={placeholderClass}
+            searchPlaceholder={t("gridSearchRows")}
+            rowsLabel={t("rows")}
+            selectedLabel={t("selected")}
+            uiText={{
+              options: t("agOptions"),
+              optionsTooltip: t("agOptionsTooltip"),
+              menuGrid: t("agMenuGrid"),
+              menuPageSize: t("agMenuPageSize"),
+              density: t("agDensity"),
+              comfortable: t("agComfortable"),
+              compact: t("agCompact"),
+              autoSizeColumns: t("agAutoSize"),
+              exportCsv: t("agExportCsv"),
+              resetGrid: t("agReset"),
+              noRows: t("agNoRows"),
+            }}
             height={460}
             ariaLabel={t("reportDataTitle")}
           />

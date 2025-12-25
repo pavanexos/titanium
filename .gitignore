@@ -3,6 +3,3 @@
 /.DS_Store
 /.env
 /.env.*
-/.vite
-/.idea
-/package-lock.json

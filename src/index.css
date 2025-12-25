@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+.ag-theme-quartz {
+  --ag-odd-row-background-color: rgba(0, 0, 0, 0.03);
+  --ag-header-background-color: rgba(255, 255, 255, 0.55);
+  --ag-border-color: rgba(15, 23, 42, 0.14);
+  --ag-row-border-color: rgba(15, 23, 42, 0.12);
+  --ag-header-foreground-color: rgba(15, 23, 42, 0.78);
+  --ag-foreground-color: rgba(15, 23, 42, 0.88);
+  --ag-background-color: transparent;
+  --ag-font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.dark .ag-theme-quartz {
+  --ag-background-color: transparent;
+  --ag-odd-row-background-color: rgba(255, 255, 255, 0.04);
+  --ag-header-background-color: rgba(255, 255, 255, 0.06);
+  --ag-border-color: rgba(255, 255, 255, 0.12);
+  --ag-row-border-color: rgba(255, 255, 255, 0.10);
+  --ag-header-foreground-color: rgba(255, 255, 255, 0.78);
+  --ag-foreground-color: rgba(255, 255, 255, 0.88);
+}
+
+.ag-theme-quartz .ag-root-wrapper {
+  background: transparent !important;
+}

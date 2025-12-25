@@ -66,6 +66,8 @@ import {
   type UserRow,
 } from "@/lib/dummy";
 
+import backdrop4k from "./assets/backdrop-4k.webp";
+
 const NOISE_SVG = `
 <svg xmlns="http://www.w3.org/2000/svg" width="260" height="260" viewBox="0 0 260 260">
   <filter id="n">
@@ -873,12 +875,12 @@ export default function App() {
   const textMuted2 = isDark ? "text-slate-200/55" : "text-slate-800/55";
   const placeholder = isDark ? "placeholder:text-slate-50/40" : "placeholder:text-slate-950/45";
 
-  const frameBg = isDark ? "bg-white/6" : "bg-white/24";
+  const frameBg = isDark ? "bg-white/5" : "bg-white/18";
   const chromeBg = isDark ? "bg-slate-950/35" : "bg-white/55";
   const surfaceBg = isDark ? "bg-white/10" : "bg-white/92";
 
   const ring = isDark ? "ring-white/10" : "ring-black/10";
-  const glass = cn("backdrop-blur-2xl backdrop-saturate-150 ring-1", ring);
+  const glass = cn("backdrop-blur-2xl backdrop-saturate-180 ring-1", ring);
 
   const shellStyle = useMemo(
     () =>
@@ -960,15 +962,16 @@ export default function App() {
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
-            backgroundImage: `radial-gradient(1100px 700px at 18% 22%, var(--glow1), rgba(0,0,0,0) 62%), radial-gradient(900px 650px at 82% 28%, var(--glow2), rgba(0,0,0,0) 64%), linear-gradient(135deg, var(--bgA), var(--bgB)), url(${BACKDROP_IMG})`,
+            backgroundImage: `radial-gradient(1100px 700px at 18% 22%, var(--glow1), rgba(0,0,0,0) 62%), radial-gradient(900px 650px at 82% 28%, var(--glow2), rgba(0,0,0,0) 64%), url(${BACKDROP_IMG})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
             filter: isDark ? "saturate(1.05) brightness(0.95)" : "saturate(1.12) brightness(1.02)",
           }}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 opacity-55 mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-40 mix-blend-overlay"
           style={{ backgroundImage: `url(${NOISE_BG})`, backgroundSize: "260px 260px" }}
         />
         <div
@@ -1014,7 +1017,10 @@ export default function App() {
                   </SheetTrigger>
                   <SheetContent
                     side="left"
-                    className={cn("w-[320px] border-none backdrop-blur-2xl", isDark ? "bg-black/55" : "bg-white/85")}
+                    className={cn(
+                      "w-[320px] border-none backdrop-blur-2xl",
+                      isDark ? "bg-black/55 text-slate-50" : "bg-white/85 text-slate-950"
+                    )}
                   >
                     <SheetHeader>
                       <SheetTitle className="flex items-center gap-2">
@@ -1172,8 +1178,10 @@ function Header(props: {
   const unreadCount = useMemo(() => notifications.filter((n) => n.unread).length, [notifications]);
 
   const chromeBtn = cn(
-    "h-10 rounded-2xl border-none ring-1",
-    isDark ? "bg-white/10 ring-white/15 hover:bg-white/15" : "bg-white/75 ring-black/10 hover:bg-white/85"
+    "h-10 rounded-2xl border-none ring-1 transition-colors",
+    isDark
+      ? "bg-white/10 ring-white/15 hover:bg-white/15 text-slate-50"
+      : "bg-white/75 ring-black/10 hover:bg-white/85 text-slate-950"
   );
 
   const markAllRead = () => setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
@@ -1213,7 +1221,7 @@ function Header(props: {
                     <div
                       className={cn(
                         "w-[760px] max-w-[92vw] rounded-3xl p-4",
-                        isDark ? "bg-black/60" : "bg-white/92",
+                        isDark ? "bg-black/60 text-slate-50" : "bg-white/92 text-slate-950",
                         "backdrop-blur-2xl ring-1",
                         isDark ? "ring-white/12" : "ring-black/10"
                       )}
@@ -1314,7 +1322,13 @@ function Header(props: {
                 <ChevronDown className="ml-2 h-4 w-4 opacity-70" aria-hidden />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className={cn("w-48 border-none backdrop-blur-2xl", isDark ? "bg-black/60" : "bg-white/92")}>
+            <DropdownMenuContent
+              align="end"
+              className={cn(
+                "w-48 border-none backdrop-blur-2xl",
+                isDark ? "bg-black/60 text-slate-50" : "bg-white/92 text-slate-950"
+              )}
+            >
               <DropdownMenuLabel className="text-xs">{t("profile")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
@@ -1378,8 +1392,10 @@ function ThemeMenu(props: {
   const { t, isDark, mode, setMode, themeId, setThemeId } = props;
 
   const chromeBtn = cn(
-    "h-10 w-10 rounded-2xl p-0 border-none ring-1",
-    isDark ? "bg-white/10 ring-white/15 hover:bg-white/15" : "bg-white/75 ring-black/10 hover:bg-white/85"
+    "h-10 w-10 rounded-2xl p-0 border-none ring-1 transition-colors",
+    isDark
+      ? "bg-white/10 ring-white/15 hover:bg-white/15 text-slate-50"
+      : "bg-white/75 ring-black/10 hover:bg-white/85 text-slate-950"
   );
 
   return (
@@ -1396,7 +1412,10 @@ function ThemeMenu(props: {
       </Tooltip>
       <PopoverContent
         align="end"
-        className={cn("w-[380px] border-none p-4 backdrop-blur-2xl ring-1", isDark ? "bg-black/60 ring-white/12" : "bg-white/92 ring-black/10")}
+        className={cn(
+          "w-[380px] border-none p-4 backdrop-blur-2xl ring-1",
+          isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/92 ring-black/10 text-slate-950"
+        )}
       >
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -1483,7 +1502,10 @@ function NotificationsMenu(props: {
       </Tooltip>
       <PopoverContent
         align="end"
-        className={cn("w-[420px] border-none p-4 backdrop-blur-2xl ring-1", isDark ? "bg-black/60 ring-white/12" : "bg-white/92 ring-black/10")}
+        className={cn(
+          "w-[420px] border-none p-4 backdrop-blur-2xl ring-1",
+          isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/92 ring-black/10 text-slate-950"
+        )}
       >
         <div className="flex items-start justify-between gap-4">
           <div>

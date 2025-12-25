@@ -37,14 +37,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -878,7 +870,7 @@ export default function App() {
   const surfaceBg = isDark ? "bg-white/10" : "bg-white/92";
 
   const ring = isDark ? "ring-white/10" : "ring-black/10";
-  const glass = cn("backdrop-blur-2xl backdrop-saturate-150 ring-1", ring);
+  const glass = cn("backdrop-blur-2xl backdrop-saturate-150 ring-1 ring-inset", ring);
 
   const shellStyle = useMemo(
     () =>
@@ -988,7 +980,7 @@ export default function App() {
           {t("skip")}
         </a>
 
-        <div className={cn("relative min-h-screen w-full", chromeBg, glass)}>
+        <div className={cn("relative min-h-screen w-full flex flex-col", chromeBg, glass)}>
           <div className="relative z-[1] overflow-visible">
             <Header
               t={t}
@@ -1042,8 +1034,8 @@ export default function App() {
             </Header>
           </div>
 
-          <div className="relative overflow-hidden">
-                <div className="flex min-h-[calc(100vh-88px)]">
+          <div className="relative flex-1 min-h-0 overflow-hidden">
+                <div className="flex flex-1 min-h-0">
                   <motion.aside
                     className={cn("hidden sm:flex flex-col flex-shrink-0")}
                     initial={false}
@@ -1072,10 +1064,10 @@ export default function App() {
                     />
                   </motion.aside>
 
-                <main id="main" className="relative flex-1">
-                  <div className={cn("h-full p-3 sm:p-5", surfaceBg)}>
-                    <div className={cn("h-full rounded-3xl", isDark ? "bg-black/18" : "bg-white/70", glass)}>
-                      <div className="p-4 sm:p-6">
+                <main id="main" className="relative flex-1 min-h-0">
+                  <div className={cn("flex h-full min-h-0 flex-col p-3 sm:p-5", surfaceBg)}>
+                    <div className={cn("flex min-h-0 flex-1 flex-col rounded-3xl", isDark ? "bg-black/18" : "bg-white/70", glass)}>
+                      <div className="flex-1 min-h-0 p-4 sm:p-6">
                         {active === "dashboard" && <Dashboard t={t} isDark={isDark} textMuted={textMuted} />}
                         {active === "queries" && (
                           <Queries
@@ -1112,7 +1104,7 @@ export default function App() {
                           <SimplePanel title={t("navAdmin")} subtitle={t("securityPosture")} isDark={isDark} textMuted={textMuted} />
                         )}
                       </div>
-                      <div className={cn("px-6 pb-6 pt-0 text-xs", textMuted2)}>{t("footer")}</div>
+                      <footer className={cn("px-6 pb-6 pt-0 text-xs", textMuted2)}>{t("footer")}</footer>
                     </div>
                   </div>
                 </main>
@@ -1185,11 +1177,19 @@ function Header(props: {
   const [notifTab, setNotifTab] = useState<NotificationType>("all");
   const unreadCount = useMemo(() => notifications.filter((n) => n.unread).length, [notifications]);
 
-  const chromeBtn = cn(
-    "h-10 rounded-2xl border-none ring-1 transition-colors",
-    isDark
-      ? "bg-white/10 ring-white/15 hover:bg-white/15 text-slate-50"
-      : "bg-white/75 ring-black/10 hover:bg-white/85 text-slate-950"
+  const controlsGroup = cn(
+    "flex items-center gap-1 rounded-3xl px-2 py-2 ring-1 ring-inset backdrop-blur-2xl",
+    isDark ? "bg-white/8 ring-white/12" : "bg-white/75 ring-black/10"
+  );
+
+  const iconBtn = cn(
+    "h-10 w-10 rounded-2xl p-0 bg-transparent transition-colors",
+    isDark ? "text-slate-50 hover:bg-white/12" : "text-slate-950 hover:bg-black/5"
+  );
+
+  const userBtn = cn(
+    "h-10 rounded-2xl px-2 bg-transparent transition-colors",
+    isDark ? "text-slate-50 hover:bg-white/12" : "text-slate-950 hover:bg-black/5"
   );
 
   const markAllRead = () => setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
@@ -1211,78 +1211,83 @@ function Header(props: {
         <div className="mx-auto hidden max-w-[760px] flex-1 sm:block">
           <div
             className={cn(
-              "flex items-center gap-2 rounded-3xl px-3 py-2 ring-1",
+              "flex items-center gap-2 rounded-3xl px-3 py-2 ring-1 ring-inset",
               isDark ? "bg-white/8 ring-white/12" : "bg-white/75 ring-black/10",
               "backdrop-blur-2xl"
             )}
           >
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className={cn("rounded-2xl", isDark ? "text-slate-50" : "text-slate-950")}>
-                    <span className="mr-2 inline-flex items-center gap-2">
-                      <Sparkles className="h-4 w-4" />
-                      {t("modules")}
-                    </span>
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="z-[260]">
-                    <div
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "h-10 rounded-2xl px-3 ring-1 ring-inset transition",
+                    isDark
+                      ? "bg-white/6 ring-white/12 hover:bg-white/10 text-slate-50"
+                      : "bg-black/5 ring-black/10 hover:bg-black/10 text-slate-950"
+                  )}
+                  aria-label={t("modules")}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    {t("modules")}
+                    <ChevronDown className="ml-1 h-4 w-4 opacity-70" aria-hidden />
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="start"
+                className={cn(
+                  "z-[260] w-[760px] max-w-[92vw] p-4 backdrop-blur-2xl ring-1 ring-inset",
+                  isDark ? "ring-white/12" : "ring-black/10"
+                )}
+              >
+                <div className="flex items-start justify-between gap-6">
+                  <div>
+                    <div className="text-sm font-semibold">{t("browseModules")}</div>
+                    <div className={cn("mt-1 text-xs", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{t("browseModulesDesc")}</div>
+                  </div>
+                  <Button variant="secondary" className="rounded-2xl">
+                    {t("viewAll")}
+                  </Button>
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {modules.map((m) => (
+                    <a
+                      key={m.key}
+                      href={m.href}
                       className={cn(
-                        "w-[760px] max-w-[92vw] rounded-3xl p-4",
-                        isDark ? "bg-black/60 text-slate-50" : "bg-white/92 text-slate-950",
-                        "backdrop-blur-2xl ring-1",
-                        isDark ? "ring-white/12" : "ring-black/10"
+                        "group rounded-2xl p-4 ring-1 ring-inset transition",
+                        isDark ? "bg-white/6 ring-white/12 hover:bg-white/10" : "bg-black/5 ring-black/10 hover:bg-black/10"
                       )}
                     >
-                      <div className="flex items-start justify-between gap-6">
+                      <div className="flex items-start justify-between gap-2">
                         <div>
-                          <div className="text-sm font-semibold">{t("browseModules")}</div>
-                          <div className={cn("mt-1 text-xs", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{t("browseModulesDesc")}</div>
+                          <div className="text-sm font-semibold">{t(m.key)}</div>
+                          <div className={cn("mt-1 text-xs", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{m.description}</div>
                         </div>
-                        <Button variant="secondary" className="rounded-2xl">
-                          {t("viewAll")}
-                        </Button>
+                        <span
+                          className={cn("mt-1 inline-flex h-8 w-8 items-center justify-center rounded-xl", isDark ? "bg-white/10" : "bg-white/70")}
+                          aria-hidden
+                        >
+                          <ChevronDown className="h-4 w-4 rotate-[-90deg] opacity-70 transition group-hover:opacity-100" />
+                        </span>
                       </div>
+                    </a>
+                  ))}
+                </div>
 
-                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                        {modules.map((m) => (
-                          <a
-                            key={m.key}
-                            href={m.href}
-                            className={cn(
-                              "group rounded-2xl p-4 ring-1 transition",
-                              isDark ? "bg-white/6 ring-white/12 hover:bg-white/10" : "bg-black/5 ring-black/10 hover:bg-black/10"
-                            )}
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <div className="text-sm font-semibold">{t(m.key)}</div>
-                                <div className={cn("mt-1 text-xs", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{m.description}</div>
-                              </div>
-                              <span
-                                className={cn("mt-1 inline-flex h-8 w-8 items-center justify-center rounded-xl", isDark ? "bg-white/10" : "bg-white/70")}
-                                aria-hidden
-                              >
-                                <ChevronDown className="h-4 w-4 rotate-[-90deg] opacity-70 transition group-hover:opacity-100" />
-                              </span>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-
-                      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                        <QuickLink icon={<FileText className="h-4 w-4" />} label={t("docs")} isDark={isDark} />
-                        <QuickLink icon={<Sparkles className="h-4 w-4" />} label={t("changelog")} isDark={isDark} />
-                        <div className={cn("rounded-2xl p-4 ring-1", isDark ? "bg-white/6 ring-white/12" : "bg-black/5 ring-black/10")}>
-                          <div className="text-xs font-semibold">{t("tip")}</div>
-                          <div className={cn("mt-1 text-xs", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{t("tipText")}</div>
-                        </div>
-                      </div>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <QuickLink icon={<FileText className="h-4 w-4" />} label={t("docs")} isDark={isDark} />
+                  <QuickLink icon={<Sparkles className="h-4 w-4" />} label={t("changelog")} isDark={isDark} />
+                  <div className={cn("rounded-2xl p-4 ring-1 ring-inset", isDark ? "bg-white/6 ring-white/12" : "bg-black/5 ring-black/10")}>
+                    <div className="text-xs font-semibold">{t("tip")}</div>
+                    <div className={cn("mt-1 text-xs", isDark ? "text-slate-200/60" : "text-slate-800/60")}>{t("tipText")}</div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
 
             <div className={cn("mx-1 h-7 w-px", isDark ? "bg-white/12" : "bg-black/10")} aria-hidden />
 
@@ -1297,22 +1302,34 @@ function Header(props: {
           </div>
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className={cn("ml-auto", controlsGroup)}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button className={cn(chromeBtn, "h-10 w-10 rounded-full p-0")} onClick={cycleLanguage} aria-label={t("language")}>
+              <Button variant="ghost" className={cn(iconBtn, "rounded-full")} onClick={cycleLanguage} aria-label={t("language")}>
                 <Globe className="h-4 w-4" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>{t("language")}: {lang}</TooltipContent>
+            <TooltipContent>
+              {t("language")}: {lang}
+            </TooltipContent>
           </Tooltip>
 
-          <ThemeMenu t={t} isDark={isDark} mode={mode} setMode={setMode} themeId={themeId} setThemeId={setThemeId} />
+          <div className={cn("mx-1 h-6 w-px", isDark ? "bg-white/12" : "bg-black/10")} aria-hidden />
+
+          <ThemeMenu
+            t={t}
+            isDark={isDark}
+            mode={mode}
+            setMode={setMode}
+            themeId={themeId}
+            setThemeId={setThemeId}
+            triggerClassName={iconBtn}
+          />
 
           <NotificationsMenu
             t={t}
             isDark={isDark}
-            chromeBtn={chromeBtn}
+            chromeBtn={iconBtn}
             unreadCount={unreadCount}
             notifTab={notifTab}
             setNotifTab={setNotifTab}
@@ -1320,14 +1337,16 @@ function Header(props: {
             markAllRead={markAllRead}
           />
 
+          <div className={cn("mx-1 h-6 w-px", isDark ? "bg-white/12" : "bg-black/10")} aria-hidden />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className={cn(chromeBtn, "h-10 rounded-2xl px-2")} aria-label={t("openUserMenu")}>
+              <Button variant="ghost" className={cn(userBtn, "gap-2")} aria-label={t("openUserMenu")}>
                 <Avatar className="h-7 w-7">
                   <AvatarImage src="https://i.pravatar.cc/64?img=32" alt="User" />
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
-                <ChevronDown className="ml-2 h-4 w-4 opacity-70" aria-hidden />
+                <ChevronDown className="h-4 w-4 opacity-70" aria-hidden />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -1360,7 +1379,7 @@ function Header(props: {
       <div className="mt-3 block sm:hidden">
         <div
           className={cn(
-            "flex items-center gap-2 rounded-3xl px-3 py-2 ring-1",
+            "flex items-center gap-2 rounded-3xl px-3 py-2 ring-1 ring-inset",
             isDark ? "bg-white/8 ring-white/12" : "bg-white/75 ring-black/10",
             "backdrop-blur-2xl"
           )}
@@ -1396,15 +1415,18 @@ function ThemeMenu(props: {
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
   themeId: ThemeId;
   setThemeId: React.Dispatch<React.SetStateAction<ThemeId>>;
+  triggerClassName?: string;
 }) {
-  const { t, isDark, mode, setMode, themeId, setThemeId } = props;
+  const { t, isDark, mode, setMode, themeId, setThemeId, triggerClassName } = props;
 
-  const chromeBtn = cn(
-    "h-10 w-10 rounded-2xl p-0 border-none ring-1 transition-colors",
-    isDark
-      ? "bg-white/10 ring-white/15 hover:bg-white/15 text-slate-50"
-      : "bg-white/75 ring-black/10 hover:bg-white/85 text-slate-950"
-  );
+  const chromeBtn =
+    triggerClassName ??
+    cn(
+      "h-10 w-10 rounded-2xl p-0 border-none ring-1 ring-inset transition-colors",
+      isDark
+        ? "bg-white/10 ring-white/15 hover:bg-white/15 text-slate-50"
+        : "bg-white/75 ring-black/10 hover:bg-white/85 text-slate-950"
+    );
 
   return (
     <Popover>
@@ -1421,7 +1443,7 @@ function ThemeMenu(props: {
       <PopoverContent
         align="end"
         className={cn(
-          "w-[380px] border-none p-4 backdrop-blur-2xl ring-1",
+        "w-[380px] border-none p-4 backdrop-blur-2xl ring-1 ring-inset",
           isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/92 ring-black/10 text-slate-950"
         )}
       >
@@ -1449,7 +1471,7 @@ function ThemeMenu(props: {
               type="button"
               onClick={() => setThemeId(th.id)}
               className={cn(
-                "flex w-full items-center justify-between gap-3 rounded-2xl p-3 text-left ring-1 transition",
+                "flex w-full items-center justify-between gap-3 rounded-2xl p-3 text-left ring-1 ring-inset transition",
                 themeId === th.id
                   ? isDark
                     ? "bg-white/12 ring-white/18"
@@ -1511,7 +1533,7 @@ function NotificationsMenu(props: {
       <PopoverContent
         align="end"
         className={cn(
-          "w-[420px] border-none p-4 backdrop-blur-2xl ring-1",
+        "w-[420px] border-none p-4 backdrop-blur-2xl ring-1 ring-inset",
           isDark ? "bg-black/60 ring-white/12 text-slate-50" : "bg-white/92 ring-black/10 text-slate-950"
         )}
       >
@@ -1539,7 +1561,7 @@ function NotificationsMenu(props: {
             .map((n) => (
               <div
                 key={n.id}
-                className={cn("rounded-2xl p-3 ring-1", isDark ? "bg-white/6 ring-white/12" : "bg-black/5 ring-black/10")}
+                className={cn("rounded-2xl p-3 ring-1 ring-inset", isDark ? "bg-white/6 ring-white/12" : "bg-black/5 ring-black/10")}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -1573,18 +1595,16 @@ function NotificationsMenu(props: {
 
 function QuickLink({ icon, label, isDark }: { icon: React.ReactNode; label: string; isDark: boolean }) {
   return (
-    <NavigationMenuLink asChild>
-      <a
-        href="#"
-        className={cn(
-          "flex items-center gap-2 rounded-2xl p-4 ring-1",
-          isDark ? "bg-white/6 ring-white/12 hover:bg-white/10" : "bg-black/5 ring-black/10 hover:bg-black/10"
-        )}
-      >
-        <span className={cn("inline-flex h-9 w-9 items-center justify-center rounded-xl", isDark ? "bg-white/10" : "bg-white/70")}>{icon}</span>
-        <span className="text-sm font-semibold">{label}</span>
-      </a>
-    </NavigationMenuLink>
+    <a
+      href="#"
+      className={cn(
+        "flex items-center gap-2 rounded-2xl p-4 ring-1 ring-inset",
+        isDark ? "bg-white/6 ring-white/12 hover:bg-white/10" : "bg-black/5 ring-black/10 hover:bg-black/10"
+      )}
+    >
+      <span className={cn("inline-flex h-9 w-9 items-center justify-center rounded-xl", isDark ? "bg-white/10" : "bg-white/70")}>{icon}</span>
+      <span className="text-sm font-semibold">{label}</span>
+    </a>
   );
 }
 
@@ -1594,7 +1614,7 @@ function SegmentButton({ active, onClick, label, isDark }: { active: boolean; on
       type="button"
       onClick={onClick}
       className={cn(
-        "h-9 flex-1 rounded-2xl px-3 text-sm font-medium ring-1 transition",
+        "h-9 flex-1 rounded-2xl px-3 text-sm font-medium ring-1 ring-inset transition",
         active
           ? isDark
             ? "bg-white/14 ring-white/18"
@@ -1622,11 +1642,18 @@ function Sidebar(props: {
   secondary: readonly { id: ActiveView; labelKey: I18nKey; icon: React.ComponentType<{ className?: string }> }[];
   prefersReducedMotion: boolean;
 }) {
-  const { t, isDark, textMuted2, collapsed, setCollapsed, active, setActive, primary, secondary, prefersReducedMotion } = props;
+  const { t, isDark, textMuted2, collapsed, setCollapsed, active, setActive, primary, secondary } = props;
 
   return (
-    <motion.div className="h-full px-3 pb-4 pt-2" layout transition={prefersReducedMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 40 }}>
-      <div className={cn("flex h-full flex-col rounded-3xl p-2", isDark ? "bg-white/8" : "bg-white/38", "backdrop-blur-2xl ring-1", isDark ? "ring-white/10" : "ring-black/10")}>
+    <div className={cn("h-full min-h-0 pb-4 pt-2", collapsed ? "px-2" : "px-3")}>
+      <div
+        className={cn(
+          "flex h-full min-h-0 flex-col rounded-3xl p-2 overflow-hidden",
+          isDark ? "bg-white/8" : "bg-white/38",
+          "backdrop-blur-2xl ring-1 ring-inset",
+          isDark ? "ring-white/10" : "ring-black/10"
+        )}
+      >
         <div className={cn("flex items-center justify-between px-2 py-2", collapsed && "px-1")}>
           <div className={cn("text-xs font-semibold uppercase tracking-wide", textMuted2, collapsed && "sr-only")}>{t("workspace")}</div>
           <Tooltip>
@@ -1646,7 +1673,7 @@ function Sidebar(props: {
           </Tooltip>
         </div>
 
-        <ScrollArea className={cn("pr-2", collapsed ? "h-[calc(100vh-220px)]" : "h-[calc(100vh-260px)]")}>
+        <ScrollArea className={cn("flex-1 min-h-0", collapsed ? "pr-0" : "pr-2")}>
           <div className={cn("space-y-1 px-1 pb-2", collapsed && "px-0")}>
             {primary.map((it) => (
               <SidebarButton
@@ -1676,53 +1703,53 @@ function Sidebar(props: {
               />
             ))}
           </div>
+        </ScrollArea>
 
-          <div className={cn("mt-4 px-2", collapsed && "px-1")}>
-            <div className={cn("rounded-3xl p-3 backdrop-blur-xl", isDark ? "bg-white/10" : "bg-white/70")}>
-              <div className="flex items-start justify-between gap-3">
-                <div className={cn(collapsed && "sr-only")}>
-                  <div className="text-sm font-semibold">{t("securityPosture")}</div>
-                  <div className={cn("text-xs", textMuted2)}>{t("ssoEnabled")}</div>
+        <div className={cn("mt-3 px-2", collapsed && "px-1")}>
+          <div className={cn("rounded-3xl p-3 backdrop-blur-xl", isDark ? "bg-white/10" : "bg-white/70")}>
+            <div className="flex items-start justify-between gap-3">
+              <div className={cn(collapsed && "sr-only")}>
+                <div className="text-sm font-semibold">{t("securityPosture")}</div>
+                <div className={cn("text-xs", textMuted2)}>{t("ssoEnabled")}</div>
+              </div>
+              {collapsed ? (
+                <div
+                  className="grid h-9 w-9 place-items-center rounded-xl text-white"
+                  style={{ background: "linear-gradient(135deg, var(--accent1), var(--accent2))" }}
+                  aria-hidden
+                >
+                  <Globe className="h-4 w-4" />
                 </div>
-                {collapsed ? (
-                  <div
-                    className="grid h-9 w-9 place-items-center rounded-xl text-white"
-                    style={{ background: "linear-gradient(135deg, var(--accent1), var(--accent2))" }}
-                    aria-hidden
-                  >
-                    <Globe className="h-4 w-4" />
-                  </div>
-                ) : (
-                  <Globe className="h-5 w-5 opacity-80" aria-hidden />
-                )}
-              </div>
+              ) : (
+                <Globe className="h-5 w-5 opacity-80" aria-hidden />
+              )}
+            </div>
 
-              <div className={cn("mt-3 flex gap-2", collapsed && "mt-2")}>
-                {!collapsed && (
-                  <Button variant="secondary" className="h-9 flex-1 rounded-2xl">
-                    {t("review")}
+            <div className={cn("mt-3 flex gap-2", collapsed && "mt-2")}>
+              {!collapsed && (
+                <Button variant="secondary" className="h-9 flex-1 rounded-2xl">
+                  {t("review")}
+                </Button>
+              )}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className={cn("h-9 hover:bg-white/20", isDark ? "bg-white/10" : "bg-white/70", collapsed ? "w-full rounded-xl" : "rounded-2xl")}
+                    aria-label={t("settings")}
+                  >
+                    <Cog className="h-4 w-4" />
+                    <span className="sr-only">{t("settings")}</span>
                   </Button>
-                )}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className={cn("h-9 hover:bg-white/20", isDark ? "bg-white/10" : "bg-white/70", collapsed ? "w-full rounded-xl" : "rounded-2xl")}
-                      aria-label={t("settings")}
-                    >
-                      <Cog className="h-4 w-4" />
-                      <span className="sr-only">{t("settings")}</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>{t("settings")}</TooltipContent>
-                </Tooltip>
-              </div>
+                </TooltipTrigger>
+                <TooltipContent>{t("settings")}</TooltipContent>
+              </Tooltip>
             </div>
           </div>
-        </ScrollArea>
+        </div>
       </div>
 
-    </motion.div>
+    </div>
   );
 }
 
@@ -1737,7 +1764,7 @@ function SidebarButton(props: {
   const { label, active, onClick, icon: Icon, collapsed, isDark } = props;
 
   const base = cn(
-    "flex w-full items-center gap-3 rounded-2xl text-left text-sm font-medium ring-1 transition",
+    "flex w-full items-center gap-3 rounded-2xl text-left text-sm font-medium ring-1 ring-inset transition",
     isDark ? "ring-white/10" : "ring-black/10",
     active ? (isDark ? "bg-white/12" : "bg-black/10") : isDark ? "bg-white/6 hover:bg-white/10" : "bg-black/5 hover:bg-black/10"
   );
@@ -1747,19 +1774,21 @@ function SidebarButton(props: {
       <TooltipTrigger asChild>
         <motion.button
           type="button"
-          layout
           onClick={onClick}
           aria-label={collapsed ? label : undefined}
           aria-current={active ? "page" : undefined}
           className={cn(
             base,
-            collapsed ? "justify-center px-0 py-2" : "px-3 py-2",
+            "h-11",
+            collapsed ? "justify-center px-0" : "px-3",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent1)]/60"
           )}
-          whileHover={{ y: -0.5 }}
+          whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 520, damping: 32, mass: 0.6 }}
+          style={{ willChange: "transform" }}
         >
-          <Icon className="h-5 w-5" />
+          <Icon className="h-5 w-5 shrink-0" />
           <AnimatePresence initial={false} mode="popLayout">
             {!collapsed && (
               <motion.span
@@ -2517,7 +2546,7 @@ function AiAssistant(props: {
               <Button
                 size="icon"
                 className={cn(
-                  "h-12 w-12 rounded-2xl shadow-lg ring-1",
+                  "h-12 w-12 rounded-2xl shadow-lg ring-1 ring-inset",
                   isDark ? "bg-white/10 ring-white/15 hover:bg-white/15" : "bg-white/80 ring-black/10 hover:bg-white/90"
                 )}
                 aria-label={t("aiAssistant")}
@@ -2574,7 +2603,7 @@ function AiAssistant(props: {
                   value={aiText}
                   onChange={(e) => setAiText(e.target.value)}
                   placeholder={t("aiPrompt")}
-                  className={cn("h-10 rounded-2xl border-none ring-1", isDark ? "bg-white/10 ring-white/10" : "bg-white/85 ring-black/10", placeholder)}
+                  className={cn("h-10 rounded-2xl border-none ring-1 ring-inset", isDark ? "bg-white/10 ring-white/10" : "bg-white/85 ring-black/10", placeholder)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") onSend();
                   }}
